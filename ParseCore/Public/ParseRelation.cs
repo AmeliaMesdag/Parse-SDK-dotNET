@@ -88,6 +88,13 @@ namespace Parse {
     internal static ParseRelationBase CreateRelation(ParseObject parent,
         string key,
         string targetClassName) {
+      // `Expression` is unstable in IL2CPP environment. Let's call the method directly!
+#if UNITY
+      if (PlatformHooks.IsCompiledByIL2CPP) {
+        return CreateRelation<ParseObject>(parent, key, targetClassName);
+      }
+#endif
+        
       var targetType = SubclassingController.GetType(targetClassName) ?? typeof(ParseObject);
 
       Expression<Func<ParseRelation<ParseObject>>> createRelationExpr =
